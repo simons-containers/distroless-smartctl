@@ -1,0 +1,46 @@
+name: Update versions
+
+on:
+  schedule:
+    - cron: "0 11 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Fetch latest versions
+        uses: nick-fields/retry@v4
+        with:
+          max_attempts: 5
+          timeout_minutes: 10
+          command: |
+            set -uo pipefail
+            SMARTCTL=$(git ls-remote --tags https://github.com/smartmontools/smartmontools \
+              | awk -F/ '/RELEASE_[0-9]_[0-9]$/ {gsub("RELEASE_",""); gsub("_","."); print $3}' 
+              | sort -V | tail -1)
+            GCC=$(curl -sf https://ftp.gnu.org/gnu/gcc/ \
+              | grep -o 'gcc-[0-9]\+\.[0-9]\+\.[0-9]\+/' \
+              | sed 's#gcc-##; s#/##' \
+              | sort -V | tail -n 1)          
+  
+            : ${SMARTCTL:?} ${GCC:?}
+
+            yq -i ".gcc= \"$GCC\"" versions.yaml
+            yq -i ".smartctl= \"$SMARTCTL\"" versions.yaml
+            git diff versions.yaml
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v8
+        with:
+          branch: update-versions
+          delete-branch: true
+          title: Update versions
+          commit-message: Update versions
