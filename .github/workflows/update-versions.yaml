@@ -24,7 +24,7 @@ jobs:
           command: |
             set -uo pipefail
             SMARTCTL=$(git ls-remote --tags https://github.com/smartmontools/smartmontools \
-              | awk -F/ '/RELEASE_[0-9]_[0-9]$/ {gsub("RELEASE_",""); gsub("_","."); print $3}' 
+              | awk -F/ '/RELEASE_[0-9]_[0-9]$/ {gsub("RELEASE_",""); gsub("_","."); print $3}' \
               | sort -V | tail -1)
             GCC=$(curl -sf https://ftp.gnu.org/gnu/gcc/ \
               | grep -o 'gcc-[0-9]\+\.[0-9]\+\.[0-9]\+/' \
@@ -33,9 +33,15 @@ jobs:
   
             : ${SMARTCTL:?} ${GCC:?}
 
-            yq -i ".gcc= \"$GCC\"" versions.yaml
-            yq -i ".smartctl= \"$SMARTCTL\"" versions.yaml
-            git diff versions.yaml
+            jq \
+              --arg gcc "$GCC" \
+              --arg smartctl  "$SMARTCTL" \
+              '
+                .gcc.version = $gcc |
+                .smartctl.version  = $smartctl
+              ' sources.json > tmp.json && mv tmp.json sources.json
+
+            git diff sources.json
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8

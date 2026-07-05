@@ -1,0 +1,16 @@
+{
+  "gcc": {
+    "version": "16.1.0",
+    "purl": "pkg:generic/gcc",
+    "source": {
+      "url_pattern": "https://mirrors.ocf.berkeley.edu/gnu/gcc/gcc-{version}/gcc-{version}.tar.gz"
+    }
+  },
+  "smartctl": {
+    "version": "7.5",
+    "purl": "pkg:generic/smartctl",
+    "source": {
+      "url_pattern": "https://github.com/smartmontools/smartmontools/releases/download/v{version}/smartmontools-{version}.tar.gz"
+    }
+  }
+}
