@@ -3,8 +3,8 @@ FROM archlinux:base-devel-20260308.0.497099 AS builder
 ARG GCC_VERSION
 ARG SMARTCTL_VERSION
 
-ARG GCC_SOURCE=https://mirrors.ocf.berkeley.edu/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.gz
-ARG SMARTCTL_SOURCE=https://github.com/smartmontools/smartmontools/releases/download/v${SMARTCTL_VERSION}/smartmontools-${SMARTCTL_VERSION}.tar.gz
+ARG GCC_SOURCE
+ARG SMARTCTL_SOURCE
 
 RUN pacman -Sy --noconfirm python >/dev/null
 
