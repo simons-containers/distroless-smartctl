@@ -39,7 +39,7 @@ RUN rm -fr /base/usr/lib/{pkgconfig,cmake,gcc} \
     && find /base/usr/lib -regextype posix-extended \
     -regex '.*\.(a|la|py|h|o)$' -delete
 
-FROM ghcr.io/simons-containers/distroless-glibc:2.43
+FROM ghcr.io/simons-containers/distroless-glibc:2.44
 
 ARG GCC_VERSION
 ARG SMARTCTL_VERSION
